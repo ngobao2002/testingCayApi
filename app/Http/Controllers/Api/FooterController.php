@@ -18,7 +18,11 @@ class FooterController extends Controller
     public function index()
     {
         $footer = Footer::all();
-        return response()->json($footer);
+        return response()->json([
+            'status' => true,
+            'message' => 'Footer retrieved',
+            'data' => $footer,
+        ]);
     }
 
     /**
@@ -43,11 +47,11 @@ class FooterController extends Controller
             'name' => ['string'],
             'address' => ['string'],
             'phone_number' => ['string'],
-            'email' =>['email','string']
+            'email' => ['email', 'string']
         ]);
-        if($validator->fails()){
+        if ($validator->fails()) {
             return response()->json($validator->messages(), 400);
-        }else {
+        } else {
             $data = [
                 'name' => $request->name,
                 'address' => $request->address,
@@ -55,17 +59,22 @@ class FooterController extends Controller
                 'email' => $request->email
             ];
             DB::beginTransaction();
-            try{
+            try {
                 Footer::create($data);
                 DB::commit();
-            }catch(\Exception $e) {
+            } catch (\Exception $e) {
                 DB::rollBack();
                 p($e->getMessage());
             }
+            return response()->json([
+                'status' => true,
+                'message' => 'Successed',
+                'data' => []
+            ]);
         }
     }
 
-    
+
 
     /**
      * Display the specified resource.
@@ -98,28 +107,53 @@ class FooterController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $input = $request->all();
-        $validator = Validator::make($input, [
-            'name' => ['string'],
-            'address' => ['string'],
-            'phone_number' => ['string'],
-            'email' =>['email','string']
-        ]);
+        // $input = $request->all();
+        // $validator = Validator::make($input, [
+        //     'name' => ['string'],
+        //     'address' => ['string'],
+        //     'phone_number' => ['string'],
+        //     'email' => ['email', 'string']
+        // ]);
 
-        if($validator->fails()) {
-            return response()->json(["message" => $validator->errors()->all()], 400);
+        // if ($validator->fails()) {
+        //     return response()->json(["message" => $validator->errors()->all()], 400);
+        // }
+
+        // $footer = Footer::find($id);
+        // $footer->name = $input['name'];
+        // $footer->address = $input['address'];
+        // $footer->phone_number = $input['phone_number'];
+        // $footer->email = $input['email'];
+        // $footer->save();
+
+        // return response()->json($footer);
+
+        $validator = $request->validate(
+            [
+                'name' => ['string'],
+                'address' => ['string'],
+                'phone_number' => ['string'],
+                'email' => ['email', 'string']
+            ]
+        );
+
+        $footer = Footer::find($id);
+
+        if ($footer) {
+            $footer->update($validator);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Footer found.',
+                'data' => $footer,
+            ]);
+        } else {
+            return response()->json([
+                'status' => true,
+                'message' => 'Footer not found.',
+                'data' => null,
+            ], 404);
         }
-
-        $footer=Footer::find($id);
-        $footer->name = $input['name'];
-        $footer->address = $input['address'];
-        $footer->phone_number = $input['phone_number'];
-        $footer->email = $input['email'];
-        $footer->save();
-        
-        return response()->json($footer);
-
-
     }
 
     /**
@@ -128,7 +162,7 @@ class FooterController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Footer $footer, $id)
+    public function destroy($id)
     {
         $footer = Footer::findOrFail($id);
         $footer->delete();
