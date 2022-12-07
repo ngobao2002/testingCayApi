@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Spatie\FlareClient\Api;
 use App\Http\Controllers\Api\FooterController;
 use App\Http\Controllers\Api\HeaderController;
+use App\Http\Controllers\Api\AdminController;
 
 
 /*
@@ -39,3 +40,6 @@ Route::get('/get-header', [HeaderController::class, 'index']);
 Route::post('/post-header', [HeaderController::class, 'store']);
 Route::delete('/delete-header/{id}', [HeaderController::class, 'destroy']);
 Route::patch('/patch-header/{id}', [HeaderController::class, 'update']);
+
+
+Route::get('/get-admin', [AdminController::class, 'index']);
