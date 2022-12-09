@@ -43,6 +43,7 @@ class FooterController extends Controller
      */
     public function store(Request $request)
     {
+
         $validator = Validator::make($request->all(), [
             'name' => ['string'],
             'address' => ['string'],
@@ -69,7 +70,12 @@ class FooterController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Successed',
-                'data' => []
+                'data' => [
+                    'name' => $request->name,
+                    'address' => $request->address,
+                    'phone_number' => $request->phone_number,
+                    'email' => $request->email
+                ]
             ]);
         }
     }
@@ -83,8 +89,10 @@ class FooterController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {
-        //
+    { {
+            $footer = Footer::where('id', $id)->first();
+            return response()->json($footer);
+        }
     }
 
     /**
