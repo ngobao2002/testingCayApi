@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Admin;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -23,7 +24,6 @@ class AdminController extends Controller
             'message' => 'Admin retrieved',
             'data' => $admin,
         ]);
-
     }
 
     /**
@@ -47,7 +47,7 @@ class AdminController extends Controller
         // $validator = Validator::make($request->all(), [
         //     'name' => ['string'],
         //     'password' => ['string'],
-            
+
         // ]);
         // if ($validator->fails()) {
         //     return response()->json($validator->messages(), 400);
@@ -55,7 +55,7 @@ class AdminController extends Controller
         //     $data = [
         //         'name' => $request->name,
         //         'password' => $request->password,
-                
+
         //     ];
         //     DB::beginTransaction();
         //     try {
@@ -104,7 +104,10 @@ class AdminController extends Controller
      */
     public function update(Request $request, $id)
     {
+
         $admin = Admin::find($id);
+        p($request->all());
+        die;
         if (is_null($admin)) {
             return response()->json(
                 [
@@ -114,8 +117,126 @@ class AdminController extends Controller
                 404
             );
         } else {
-            $admin->name = $request['name'];
-            $admin->password = $request['password'];
+            DB::beginTransaction();
+            try {
+                $admin->name = $request['name'];
+                $admin->password = $request['password'];
+                $admin->save();
+                DB::commit();
+            } catch (\Exception $err) {
+                DB::rollBack();
+                $admin = null;
+            }
+
+            if (is_null($admin)) {
+                return response()->json(
+                    [
+                        'status' => 0,
+                        'message' => 'Internal sever error',
+                        'error_msg' => $err->getMessage()
+                    ],
+                    500
+                );
+            } else {
+                return response()->json(
+                    [
+                        'status' => 1,
+                        'message' => 'Data updated successfully'
+                    ],
+                    200
+                );
+            }
+        }
+    }
+
+    public function changePassword(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'old_password' => 'required|min:2|max:100',
+            'password' =>  'required|min:2|max:100',
+            'confirm_password' => 'required|same:password'
+        ]);
+        $admin = Admin::find($id);
+        // p($request->all());
+        // die;
+        // if (is_null($admin)) {
+        //     return response()->json(
+        //         [
+        //             'status' => 0,
+        //             'message' => 'Admin does not exists'
+        //         ],
+        //         404
+        //     );
+        // } else {
+        //     // main -> change password code
+        //     if ($admin->password == $request['old_password']) {
+        //         if ($request['new_password'] == $request['confirm_password']) {
+        //             //change   
+        //             DB::beginTransaction();
+        //             try {
+        //                 $admin->password = $request['new_password'];
+        //                 $admin->save();
+        //                 DB::commit();
+        //             } catch (\Exception $err) {
+        //                 $admin = null;
+        //                 DB::rollBack();
+        //             }
+        //             if (is_null($admin)) {
+        //                 return response()->json(
+        //                     [
+        //                         'status' => 0,
+        //                         'message' => 'Internal sever error',
+        //                         'error_msg' => $err->getMessage()
+        //                     ],
+        //                     500
+        //                 );
+        //             } else {
+        //                 return response()->json(
+        //                     [
+        //                         'status' => 1,
+        //                         'message' => 'Password updated successfully'
+        //                     ],
+        //                     200
+        //                 );
+        //             }
+        //         } else {
+        //             return response()->json(
+        //                 [
+        //                     'status' => 0,
+        //                     'message' => 'New password and confirm does not match'
+        //                 ],
+        //                 400
+        //             );
+        //         }
+        //     } else {
+        //         return response()->json(
+        //             [
+        //                 'status' => 0,
+        //                 'message' => 'Old password does not match'
+        //             ],
+        //             400
+        //         );
+        //     }
+        // }
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validations fails',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $admin = $request->user();
+        if (Hash::check($request->old_password, $admin->password)) {
+            $admin->update([
+                'password' => Hash::make($request->password)
+            ]);
+            return response()->json([
+                'message' => 'Password successfully updated',
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => 'Old password does not matched',
+            ], 400);
         }
     }
 
