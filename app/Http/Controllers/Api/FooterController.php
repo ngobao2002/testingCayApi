@@ -115,27 +115,6 @@ class FooterController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // $input = $request->all();
-        // $validator = Validator::make($input, [
-        //     'name' => ['string'],
-        //     'address' => ['string'],
-        //     'phone_number' => ['string'],
-        //     'email' => ['email', 'string']
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return response()->json(["message" => $validator->errors()->all()], 400);
-        // }
-
-        // $footer = Footer::find($id);
-        // $footer->name = $input['name'];
-        // $footer->address = $input['address'];
-        // $footer->phone_number = $input['phone_number'];
-        // $footer->email = $input['email'];
-        // $footer->save();
-
-        // return response()->json($footer);
-
         $validator = $request->validate(
             [
                 'name' => ['string'],
@@ -164,12 +143,6 @@ class FooterController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         $footer = Footer::findOrFail($id);

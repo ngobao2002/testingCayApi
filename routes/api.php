@@ -6,6 +6,7 @@ use Spatie\FlareClient\Api;
 use App\Http\Controllers\Api\FooterController;
 use App\Http\Controllers\Api\HeaderController;
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\GuideController;
 use App\Models\Admin;
 
 /*
@@ -42,7 +43,22 @@ Route::post('/post-header', [HeaderController::class, 'store']);
 Route::delete('/delete-header/{id}', [HeaderController::class, 'destroy']);
 Route::patch('/patch-header/{id}', [HeaderController::class, 'update']);
 
-
+//Admin home
 Route::get('/get-admin', [AdminController::class, 'index']);
 Route::put('/post-admin/{id}', [AdminController::class, 'update']);
 Route::post('/change-password/{id}', [AdminController::class], 'changePassword');
+
+
+//Guide page
+Route::get('/get-guide', [GuideController::class, 'index']);
+Route::post('/post-guide', [GuideController::class, 'store']);
+Route::patch('/patch-guide/{id}', [GuideController::class, 'update']);
+
+//List of guide page
+Route::get('/get-list', [AdminController::class, 'index']);
+Route::get('/get-list/{id}', [AdminController::class, 'show']);
+Route::post('/post-list', [AdminController::class, 'store']);
+Route::patch('/patch-list/{id}', [AdminController::class, 'update']);
+Route::delete('/delete-list/{id}', [AdminController::class, 'delete']);
+
+

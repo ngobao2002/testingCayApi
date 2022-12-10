@@ -157,67 +157,6 @@ class AdminController extends Controller
             'confirm_password' => 'required|same:password'
         ]);
         $admin = Admin::find($id);
-        // p($request->all());
-        // die;
-        // if (is_null($admin)) {
-        //     return response()->json(
-        //         [
-        //             'status' => 0,
-        //             'message' => 'Admin does not exists'
-        //         ],
-        //         404
-        //     );
-        // } else {
-        //     // main -> change password code
-        //     if ($admin->password == $request['old_password']) {
-        //         if ($request['new_password'] == $request['confirm_password']) {
-        //             //change   
-        //             DB::beginTransaction();
-        //             try {
-        //                 $admin->password = $request['new_password'];
-        //                 $admin->save();
-        //                 DB::commit();
-        //             } catch (\Exception $err) {
-        //                 $admin = null;
-        //                 DB::rollBack();
-        //             }
-        //             if (is_null($admin)) {
-        //                 return response()->json(
-        //                     [
-        //                         'status' => 0,
-        //                         'message' => 'Internal sever error',
-        //                         'error_msg' => $err->getMessage()
-        //                     ],
-        //                     500
-        //                 );
-        //             } else {
-        //                 return response()->json(
-        //                     [
-        //                         'status' => 1,
-        //                         'message' => 'Password updated successfully'
-        //                     ],
-        //                     200
-        //                 );
-        //             }
-        //         } else {
-        //             return response()->json(
-        //                 [
-        //                     'status' => 0,
-        //                     'message' => 'New password and confirm does not match'
-        //                 ],
-        //                 400
-        //             );
-        //         }
-        //     } else {
-        //         return response()->json(
-        //             [
-        //                 'status' => 0,
-        //                 'message' => 'Old password does not match'
-        //             ],
-        //             400
-        //         );
-        //     }
-        // }
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Validations fails',
@@ -240,12 +179,6 @@ class AdminController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //
