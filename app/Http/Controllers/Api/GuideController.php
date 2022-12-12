@@ -122,14 +122,14 @@ class GuideController extends Controller
     }
 
 
-    public function destroy($id)
-    {
-        $Guide = Guide::findOrFail($id);
-        $Guide->delete();
-        return response()->json([
-            'status' => true,
-            'message' => 'Deleted',
-            'data' => [],
-        ]);
-    }
+    // public function destroy($id)
+    // {
+    //     $Guide = Guide::findOrFail($id);
+    //     $Guide->delete();
+    //     return response()->json([
+    //         'status' => true,
+    //         'message' => 'Deleted',
+    //         'data' => [],
+    //     ]);
+    // }
 }

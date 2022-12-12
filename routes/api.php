@@ -7,6 +7,8 @@ use App\Http\Controllers\Api\FooterController;
 use App\Http\Controllers\Api\HeaderController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\GuideController;
+use App\Http\Controllers\Api\GuideListController;
+
 use App\Models\Admin;
 
 /*
@@ -55,10 +57,10 @@ Route::post('/post-guide', [GuideController::class, 'store']);
 Route::patch('/patch-guide/{id}', [GuideController::class, 'update']);
 
 //List of guide page
-Route::get('/get-list', [AdminController::class, 'index']);
-Route::get('/get-list/{id}', [AdminController::class, 'show']);
-Route::post('/post-list', [AdminController::class, 'store']);
-Route::patch('/patch-list/{id}', [AdminController::class, 'update']);
-Route::delete('/delete-list/{id}', [AdminController::class, 'delete']);
+Route::get('/get-items', [GuideListController::class, 'index']);
+Route::get('/get-items/{id}', [GuideListController::class, 'show']);
+Route::post('/post-items', [GuideListController::class, 'store']);
+Route::patch('/patch-items/{id}', [GuideListController::class, 'update']);
+Route::delete('/delete-items/{id}', [GuideListController::class, 'destroy']);
 
 
